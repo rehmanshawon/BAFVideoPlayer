@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">নক্ষত্র</string>
+    <string name="icon">Icon</string>
+    <string name="bangladesh_air_force">নক্ষত্র</string>
+    <string name="logo">Logo</string>
+    <string name="background">Background</string>
+    <string name="video_title">Video Title</string>
+    <string name="btnFolder">Set Video Folder</string>
+    <string name="btnExit">Exit App</string>
+</resources>
