@@ -7,19 +7,29 @@
 
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.RecycleTest">
+        <activity android:name=".AircraftContentActivity"></activity>
         <activity android:name=".VideoPlayer"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:screenOrientation="landscape">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AircraftListActivity" />
+        <activity android:name=".VideoListActivity" />
+        <activity android:name=".ImageListActivity" />
+        <activity android:name=".VideoPlayerPlayList" />
+        <activity android:name=".ImagePlayerPlayList" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".ActivityChangePassword" />
     </application>
 
 </manifest>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/CV_IMAGE"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_80sdp"
+    android:layout_gravity="center"
+    android:layout_margin="@dimen/_10sdp"
+    app:cardCornerRadius="@dimen/_5sdp"
+    app:cardElevation="@dimen/_5sdp">
+
+    <ImageView
+        android:id="@+id/IV_IMAGE_THUMB"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_70sdp"
+        android:layout_gravity="center"
+        android:contentDescription="@string/image_thumb" />
+
+    <TextView
+        android:id="@+id/TV_IMAGE_TITLE"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/aircraft_name"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:textAlignment="center"
+        android:textSize="@dimen/_8sdp"
+        android:textStyle="bold"
+        android:contentDescription="@string/image_title"
+        />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/FAB_CROSS_IMAGE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:visibility="gone"
+        app:srcCompat="@android:drawable/ic_delete" />
+
+</androidx.cardview.widget.CardView>

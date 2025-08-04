@@ -14,17 +14,18 @@ import android.os.storage.StorageVolume;
 import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -32,101 +33,122 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+import static com.kopotron.bafvideoplayer.Utilities.loadAircraftData;
+import static com.kopotron.bafvideoplayer.Utilities.loadUserInfo;
+import static com.kopotron.bafvideoplayer.Utilities.rescanImages;
+import static com.kopotron.bafvideoplayer.Utilities.rescanMovies;
+import static com.kopotron.bafvideoplayer.Utilities.saveUserInfo;
+
+public class MainActivity extends BaseActivity {
+    // This button is placed in main activity layout.
+    private Button navigateToAircraft = null;
+    // This listview is just under above button.
+    private ListView userDataListView = null;
+    // Below edittext and button are all exist in the popup dialog view.
+    private View popupInputDialogView = null;
+    // Contains user name data.
+    private EditText userNameEditText = null;
+    // Contains password data.
+    private EditText passwordEditText = null;
+    // Contains email data.
+    private EditText emailEditText = null;
+    // Click this button in popup dialog to save user input data in above three edittext.
+    private Button saveUserDataButton = null;
+    // Click this button to cancel edit user data.
+    private Button cancelUserDataButton = null;
+
+    FloatingActionButton floatingActionButtonMain=null;
     private static Context context;
     private static final String TAG ="Permission" ;
     private ArrayList<Integer> listPermission;// add all permission in list which you used in manifes.xml
 
+    ArrayList<AircraftData> aircraftDataArrayList;
+   // AircraftViewAdapter aircraftViewAdapter=null;
+    private static Intent videoIntent;
+    private static Intent imageIntent;
+    private List<String> movieList;
+    private List<String> pictureList;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void baseOnCreate(Bundle savedInstanceState) {
+        //super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        floatingActionButtonMain=findViewById(R.id.FAB_MAIN);
         isStoragePermissionGranted();
-        MainActivity.context = getApplicationContext();
-        Button btnFolder= (Button)findViewById(R.id.btnFolder);
-        btnFolder.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                // click handling code
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
-                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                    i.addCategory(Intent.CATEGORY_DEFAULT);
-                    startActivityForResult(Intent.createChooser(i, "Select Video Folder"), 9999);
-                }
-            }
-        });
-         /*
-        Button btnExit= (Button)findViewById(R.id.btnExit);
-        btnFolder.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                // click handling code
-                //finishAffinity();
-                //finishAndRemoveTask();
-                moveTaskToBack(true);
-                android.os.Process.killProcess(android.os.Process.myPid());
-                System.exit(1);
-            }
-        });
-
-        //File dir = Environment.getExternalStorageDirectory();
-        File dir = new File("/storage/emulated/0/Movies");
-        Log.d(TAG, "onCreate: "+dir);
-        String pattern = ".mp4";
-        //String[] filenames=new String[0];
-        List<String> filenames = new ArrayList<String>();
-        //List<String> path_vid=new List<String>();
-        //
-        //dir.
-        //File[] files = dir.listFiles(new MediaFileFilter());
-        File[] files = dir.listFiles();
-        if (files != null) {
-            for (int i = 0; i < files.length; i++) {
-               // final int x = i;
-                //if (listFile[i].isDirectory()) {
-                //    walkdir(listFile[i]);
-                //} else {
-                    if (files[i].getName().endsWith(pattern)) {
-                        // Do what ever u want, add the path of the video to the list
-                        filenames.add(files[i].getName());
-                        Log.d(TAG, "onFile: "+filenames.get(i));
-                    }
-                }
-            }
-
-        //Log.d(TAG, "onCreate: "+files[0]);
-        String[] names = files[0].list(
-                new FilenameFilter()
-                {
-                    public boolean accept(File dir, String name)
-                    {
-                        return name.endsWith(".mp4");
-                        // Example
-                        // return name.endsWith(".mp3");
-                    }
-                });
-
-        MyListData[] myListData = new MyListData[filenames.size()];
-        //String moviePath=dir.getAbsolutePath()+"/Movies/";
-        String moviePath="/storage/emulated/0/Movies/";
-        //moviePath="//com.android.externalstorage.documents/tree/primary%3AMovies";
-        //Log.d(TAG, moviePath);
-        // myListData[0].
-        for(int i=0;i<filenames.size();i++) {
-            //Log.d(TAG, moviePath+names[i]);
-            String nameOnly= filenames.get(i).split("\\.")[0];
-            myListData[i]=new MyListData(nameOnly, moviePath+filenames.get(i));
-            Log.d(TAG, "onAdd: "+moviePath+filenames.get(i));
-            //playDummy(moviePath+names[i]);
+        this.context = getApplicationContext();
+        // Only save default user if none exists
+        UserInfo existing = loadUserInfo(context);
+        if (existing == null) {
+            UserInfo userInfo = new UserInfo("admin", "123456", false);
+            saveUserInfo(context, userInfo);
         }
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        MyListAdapter adapter = new MyListAdapter(myListData);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, filenames.size()));
-        recyclerView.setAdapter(adapter);
-        */
+       // openAircraftListactivity();
+       //initMainActivityControls();
+
+        // When click the open input popup dialog button.
+//        navigateToAircraft.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                openAircraftListactivity();
+//            }
+//        });
+        floatingActionButtonMain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openAircraftListactivity();
+            }
+        });
     }
+    private void prepareVideoPlayerListIntent(){
+        videoIntent = new Intent(context, VideoPlayerPlayList.class);
+        aircraftDataArrayList=loadAircraftData(context);
+        movieList=rescanMovies(aircraftDataArrayList);
+        videoIntent.putStringArrayListExtra("videoList", (ArrayList<String>) movieList);
+        videoIntent.putExtra("index",0);
+    }
+    private void prepareImagePlayerListIntent(){
+        imageIntent = new Intent(context, ImagePlayerPlayList.class);
+        aircraftDataArrayList=loadAircraftData(context);
+        pictureList=rescanImages(aircraftDataArrayList);
+        imageIntent.putStringArrayListExtra("imageList", (ArrayList<String>) pictureList);
+        imageIntent.putExtra("index",0);
+    }
+
+    @Override
+    protected void reactToIdleState() {
+        UserInfo userInfo=loadUserInfo(context);
+        userInfo.setLoggedIn(false);
+        saveUserInfo(context,userInfo);
+       // openInputPopupDialogButton.setVisibility(View.INVISIBLE);
+        prepareVideoPlayerListIntent();
+        prepareImagePlayerListIntent();
+       // aircraftViewAdapter.notifyDataSetChanged();
+        if(movieList.size()>0) {
+            context.startActivity(videoIntent);
+        }
+        else{
+            if(pictureList.size()>0)
+            {
+                context.startActivity(imageIntent);
+            }
+        }
+        //Toast.makeText(context, "user is inactive from last 10 seconds",Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    protected void baseOnResume() {
+
+
+        Log.d("resume","Main Activity");
+    }
+
+    public void openAircraftListactivity(){
+        Intent intent = new Intent(this, AircraftListActivity.class);
+        startActivity(intent);
+    }
+    /* Initialize main activity ui controls ( button and listview ). */
+
+
     public void populateWithVideos(String folderPath){
         File dir = new File(folderPath);
         String pattern = ".mp4";
@@ -134,87 +156,77 @@ public class MainActivity extends AppCompatActivity {
         File[] files = dir.listFiles();
         if (files != null) {
             for (int i = 0; i < files.length; i++) {
-                // final int x = i;
-                //if (listFile[i].isDirectory()) {
-                //    walkdir(listFile[i]);
-                //} else {
                 if (files[i].getName().endsWith(pattern)) {
                     // Do what ever u want, add the path of the video to the list
                     filenames.add(files[i].getName());
-                   // Log.d(TAG, "onFile: "+filenames.get(i));
                 }
             }
+
+        }
+        if(filenames.size()>0)
+        {
+            MyListData[] myListData = new MyListData[filenames.size()];
+            for(int i=0;i<filenames.size();i++) {
+                String nameOnly= filenames.get(i).split("\\.")[0];
+                myListData[i]=new MyListData(nameOnly, folderPath+"/"+filenames.get(i));
+            }
+//            RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+//            MyListAdapter adapter = new MyListAdapter(myListData);
+//            GridLayoutManager layoutManager=new GridLayoutManager(this,3);
+//            recyclerView.setLayoutManager(layoutManager);
+//            recyclerView.setAdapter(adapter);
         }
 
-        MyListData[] myListData = new MyListData[filenames.size()];
-        for(int i=0;i<filenames.size();i++) {
-            //Log.d(TAG, moviePath+names[i]);
-            String nameOnly= filenames.get(i).split("\\.")[0];
-            myListData[i]=new MyListData(nameOnly, folderPath+"/"+filenames.get(i));
-            //Log.d(TAG, "onAdd: "+myListData[i].getImgPath());
-            //playDummy(moviePath+names[i]);
-        }
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        MyListAdapter adapter = new MyListAdapter(myListData);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, filenames.size()));
-        recyclerView.setAdapter(adapter);
     }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //super.onStart();
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//    }
 
-
-        //ViewGroup vg = findViewById (R.id.activity_main);
-        //vg.invalidate();
-        //getWindow().getDecorView().findViewById(android.R.id.content).invalidate();
-        //Toast.makeText(getApplicationContext(), "Now onStart() calls", Toast.LENGTH_LONG).show(); //onStart Called
-    }
-
-    //Options Menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.system_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+        super.onCreateOptionsMenu(menu);
+        return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_set_folder:
-               // Toast.makeText(this, "Set Movie Directory", Toast.LENGTH_SHORT).show();
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP){
-                    Intent i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                    i.addCategory(Intent.CATEGORY_DEFAULT);
-                    startActivityForResult(Intent.createChooser(i, "Choose directory"), 9999);
-                }
-                break;
-            case R.id.action_about:
-                //AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                //alertDialogBuilder.setPositiveButton("Hello",
-                //        DialogInterface.OnClickListener listener)
-                //Toast.makeText(this, "Copyright Information", Toast.LENGTH_SHORT).show();
-                try {
-                    showDialog("Copyright (c) 2021 Bangladesh Air Force.\nbaf.mil.bd","App Copyright");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            case R.id.action_developer:
-                //Toast.makeText(this, "Developer Information", Toast.LENGTH_SHORT).show();
-                try {
-                    showDialog("Kopotron Corporation.\nserver.kopotron.com","App Developer");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                break;
-            default:
-                break;
-        }
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
+    //Options Menu
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.system_menu, menu);
+//        inflater.inflate(R.menu.options_menu, menu);
+//        return super.onCreateOptionsMenu(menu);
+//    }
+
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()){
+//
+//            case R.id.action_about:
+//            case R.id.about_item:
+//                try {
+//                    showDialog("Copyright (c) 2021 Bangladesh Air Force.\nbaf.mil.bd","App Copyright");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                break;
+//            case R.id.action_developer:
+//            case R.id.developer_item:
+//                try {
+//                    showDialog("Kopotron Corporation.\nserver.kopotron.com","App Developer");
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//                break;
+//            default:
+//                break;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
     public void showDialog(final String message, final String Title) throws Exception {
         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -239,17 +251,15 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             if (checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
-                Log.v(TAG,"Permission is granted");
+
                 return true;
             } else {
-
-                Log.v(TAG,"Permission is revoked");
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
                 return false;
             }
         }
         else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG,"Permission is granted");
+
             return true;
         }
     }
@@ -262,8 +272,6 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
-            //resume tasks needing this permission
 
         }
     }
@@ -274,37 +282,16 @@ public class MainActivity extends AppCompatActivity {
 
         switch(requestCode) {
             case 9999:
-                Log.v("Test", "Result URI " + data.getData());
+                if(data==null) break;
                 Uri treeUri = data.getData();
                 String path = FileUtil.getFullPathFromTreeUri(treeUri,this);
                 populateWithVideos(path);
-               // Uri docUri = DocumentsContract.buildDocumentUriUsingTree(uri,
-               //        DocumentsContract.getTreeDocumentId(uri));
-                final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-                Log.v("Is KitKat", String.valueOf(isKitKat));
-                Log.d(TAG, "onActivityResult: "+path);
-               // String path = getPath(this, docUri);
+                final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;  
+
                 break;
         }
     }
-/*
-    public  void playDummy(String videoPath){
-        VideoView videoViewD =(VideoView)findViewById(R.id.videoViewD);
 
-        //Set MediaController  to enable play, pause, forward, etc options.
-        MediaController mediaController= new MediaController(this);
-        mediaController.setAnchorView(videoViewD);
-        //Starting VideView By Setting MediaController and URI
-        videoViewD.setMediaController(mediaController);
-        videoViewD.setVideoURI(Uri.parse(videoPath));
-        //videoViewD.requestFocus();
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        videoViewD.setVisibility(videoViewD.INVISIBLE);
-        videoViewD.start();
-        videoViewD.seekTo(2000);
-        videoViewD.stopPlayback();
-    }
-    */
 }
 
 final class FileUtil {
@@ -338,7 +325,7 @@ final class FileUtil {
             return null;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
             return getVolumePathForAndroid11AndAbove(volumeId, context);
-        else
+        else 
             return getVolumePathBeforeAndroid11(volumeId, context);
     }
 

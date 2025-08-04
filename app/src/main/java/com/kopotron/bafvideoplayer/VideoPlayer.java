@@ -14,18 +14,20 @@ import android.widget.VideoView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class VideoPlayer extends AppCompatActivity {
 
-
+private FloatingActionButton goToAircraftList=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_video_player);
-
+        goToAircraftList=findViewById(R.id.FAB_GOTO_ACLIST);
+        goToAircraftList.setVisibility(View.INVISIBLE);
         // create the get Intent object
         Intent intent = getIntent();
-
         // receive the value by getStringExtra() method
         // and key must be same which is send by first activity
         String videoPath = intent.getStringExtra("video");
@@ -50,6 +52,7 @@ public class VideoPlayer extends AppCompatActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 //VideoPlayer.super.onTouchEvent(event);
+                goToAircraftList.setVisibility(goToAircraftList.getVisibility()==View.VISIBLE?View.INVISIBLE:View.VISIBLE);
                 getSupportActionBar().show();
                 return false;
             }
@@ -67,10 +70,7 @@ public class VideoPlayer extends AppCompatActivity {
     }
     public boolean onOptionsItemSelected(MenuItem item){
         finish();
-        //Intent myIntent = new Intent(getApplicationContext(), MainActivity.class);
-        //startActivityForResult(myIntent, 0);
         return true;
     }
 
-    //private void setSupportActionBar(Toolbar toolbar) { }
 }

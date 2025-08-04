@@ -1,6 +1,7 @@
 package com.kopotron.bafvideoplayer;
 
 public class MyListData {
+    public MyListData() {} // Required no-arg constructor
     private String description;
     private String imgPath;
     public MyListData(String description, String imgPath) {

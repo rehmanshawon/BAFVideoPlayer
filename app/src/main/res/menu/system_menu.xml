@@ -2,12 +2,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:actionProviderClass="http://schemas.android.com/tools">
-    <item
-        android:id="@+id/action_set_folder"
-        android:icon="@drawable/ic_baseline_movie_24"
-        app:showAsAction="always"
-        android:title="Movie Location">
+
+    <item android:id="@+id/action_login"
+        android:icon="@drawable/ic_baseline_login_24"
+        android:title="Login"
+        app:showAsAction="always">
     </item>
+    <item
+        android:id="@+id/action_logout"
+        android:icon="@drawable/icons8_logout_rounded_left_90"
+        android:iconTint="@color/white"
+        android:title="Logout"
+        app:showAsAction="always"></item>
     <item android:id="@+id/action_about"
         android:icon="@drawable/ic_baseline_copyright_24"
         android:title="About"

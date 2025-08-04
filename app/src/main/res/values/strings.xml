@@ -2,9 +2,28 @@
     <string name="app_name">নক্ষত্র</string>
     <string name="icon">Icon</string>
     <string name="bangladesh_air_force">নক্ষত্র</string>
+    <string name="main_title">BANGABANDHU MILITARY MUSEUM</string>
+    <string name="sub_title">BANGLADESH AIRFORCE GALLERY</string>
     <string name="logo">Logo</string>
     <string name="background">Background</string>
     <string name="video_title">Video Title</string>
+    <string name="image_title">Image Title</string>
     <string name="btnFolder">Set Video Folder</string>
     <string name="btnExit">Exit App</string>
+    <string name="videoImage">Video Image Holder</string>
+    <string name="aircraft_name">Aircraft Name Holder</string>
+    <string name="video_folder">Got to Videos directory</string>
+    <string name="image_folder">Go to Images directory</string>
+    <string name="video_thumb">Thumbnail of the Video</string>
+    <string name="image_thumb">Thumbnail of the Image</string>
+    <string name="et_name">User Name</string>
+    <string name="et_password">User Password</string>
+    <string name="bt_login">LOGIN</string>
+    <string name="tv_login">Admin Login</string>
+    <string name="et_c_pass"></string>
+    <string name="et_n_pass"></string>
+    <string name="tv_c_pass">Current Password</string>
+    <string name="tv_n_pass">New Password</string>
+    <string name="bt_s_pass">Save New Password</string>
+
 </resources>
