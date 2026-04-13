@@ -27,6 +27,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -59,6 +60,7 @@ public class AircraftListActivity extends BaseActivity {
 
     // This button is placed in main activity layout.
     private FloatingActionButton openInputPopupDialogButton = null;
+    private ExtendedFloatingActionButton changeSettingsButton = null;
     // Below edittext and button are all exist in the popup dialog view.
     private View popupInputDialogView = null;
     // Click this button in popup dialog to save user input data in above three edittext.
@@ -124,8 +126,7 @@ public class AircraftListActivity extends BaseActivity {
 //        Intent intent = getIntent();
 //        String loggedIn=intent.getStringExtra("loggedIn");
         UserInfo userInfo=loadUserInfo(context);
-        if(userInfo.getLoggedIn())
-            openInputPopupDialogButton.setVisibility(View.VISIBLE);
+        setAdminControlsVisible(userInfo.getLoggedIn());
 
 //        if(loggedIn!=null && loggedIn.equals("true"))
 //        {
@@ -153,7 +154,7 @@ public class AircraftListActivity extends BaseActivity {
         UserInfo userInfo=loadUserInfo(context);
         userInfo.setLoggedIn(false);
         saveUserInfo(context,userInfo);
-        openInputPopupDialogButton.setVisibility(View.INVISIBLE);
+        setAdminControlsVisible(false);
         prepareVideoPlayerListIntent();
         prepareImagePlayerListIntent();
         aircraftViewAdapter.notifyDataSetChanged();
@@ -182,10 +183,7 @@ public class AircraftListActivity extends BaseActivity {
             saveImageList(context, (ArrayList<String>) pictureList);
         }
         UserInfo userInfo=loadUserInfo(context);
-        if(userInfo.getLoggedIn())
-            openInputPopupDialogButton.setVisibility(View.VISIBLE);
-        else
-            openInputPopupDialogButton.setVisibility(View.INVISIBLE);
+        setAdminControlsVisible(userInfo.getLoggedIn());
 
         Log.d("resume","AircraftListActivity");
     }
@@ -196,6 +194,7 @@ public class AircraftListActivity extends BaseActivity {
         if(openInputPopupDialogButton == null)
         {
             openInputPopupDialogButton = findViewById(R.id.open_modal_bottom_sheet);
+            changeSettingsButton = findViewById(R.id.btn_change_settings);
             // When click the open input popup dialog button.
             openInputPopupDialogButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -279,8 +278,26 @@ public class AircraftListActivity extends BaseActivity {
                     });
                 }
             });
+
+            changeSettingsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(AircraftListActivity.this, ActivityChangePassword.class);
+                    startActivity(intent);
+                }
+            });
         }
 
+    }
+
+    private void setAdminControlsVisible(boolean visible) {
+        int visibility = visible ? View.VISIBLE : View.GONE;
+        if (openInputPopupDialogButton != null) {
+            openInputPopupDialogButton.setVisibility(visibility);
+        }
+        if (changeSettingsButton != null) {
+            changeSettingsButton.setVisibility(visibility);
+        }
     }
 
     @Override

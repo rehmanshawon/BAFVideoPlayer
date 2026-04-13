@@ -40,6 +40,8 @@ public class BaseActivity extends AppCompatActivity {
         mHandler = new Handler();
         mHandler.postDelayed(mRunnable, TIMEOUT);
         super.onResume();
+        updateAdminModeTitle();
+        invalidateOptionsMenu();
         baseOnResume();
     }
 
@@ -85,7 +87,14 @@ public class BaseActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.system_menu, menu);
         inflater.inflate(R.menu.options_menu, menu);
+        updateMenuVisibility(menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        updateMenuVisibility(menu);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -107,6 +116,7 @@ public class BaseActivity extends AppCompatActivity {
                 UserInfo userInfo=loadUserInfo(this);
                 userInfo.setLoggedIn(false);
                 saveUserInfo(this,userInfo);
+                updateAdminModeTitle();
                 finish();
                 startActivity(getIntent());
                 return true;
@@ -130,6 +140,36 @@ public class BaseActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void updateMenuVisibility(Menu menu) {
+        UserInfo userInfo = loadUserInfo(this);
+        boolean isLoggedIn = userInfo.getLoggedIn();
+
+        setMenuItemVisibility(menu, R.id.action_login, !isLoggedIn);
+        setMenuItemVisibility(menu, R.id.menu_login, !isLoggedIn);
+        setMenuItemVisibility(menu, R.id.action_logout, isLoggedIn);
+        setMenuItemVisibility(menu, R.id.menu_logout, isLoggedIn);
+        setMenuItemVisibility(menu, R.id.action_about, !isLoggedIn);
+        setMenuItemVisibility(menu, R.id.about_item, !isLoggedIn);
+        setMenuItemVisibility(menu, R.id.action_developer, !isLoggedIn);
+        setMenuItemVisibility(menu, R.id.developer_item, !isLoggedIn);
+    }
+
+    private void setMenuItemVisibility(Menu menu, int itemId, boolean visible) {
+        MenuItem menuItem = menu.findItem(itemId);
+        if (menuItem != null) {
+            menuItem.setVisible(visible);
+        }
+    }
+
+    private void updateAdminModeTitle() {
+        UserInfo userInfo = loadUserInfo(this);
+        if (userInfo.getLoggedIn()) {
+            setTitle(getString(R.string.admin_mode_title, getString(R.string.app_name)));
+        } else {
+            setTitle(getString(R.string.app_name));
         }
     }
 }

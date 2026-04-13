@@ -15,7 +15,7 @@ import static com.kopotron.bafvideoplayer.Utilities.loadUserInfo;
 import static com.kopotron.bafvideoplayer.Utilities.saveUserInfo;
 
 public class LoginActivity extends AppCompatActivity {
-    Button buttonLogin,btnChange;
+    Button buttonLogin;
     EditText editTextName, editTextPassword;
     UserInfo userInfo;
     private static Context context;
@@ -24,10 +24,9 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         this.context = getApplicationContext();
-        buttonLogin = (Button)findViewById(R.id.BT_LOGIN);
-        editTextName = (EditText)findViewById(R.id.ET_NAME);
-        editTextPassword = (EditText)findViewById(R.id.ET_PASSWORD);
-        btnChange=findViewById(R.id.BT_CHANGE);
+        buttonLogin = (Button)findViewById(R.id.btnLogin);
+        editTextName = (EditText)findViewById(R.id.etUserId);
+        editTextPassword = (EditText)findViewById(R.id.etPassword);
 
        // userInfo=new UserInfo("admin","admin",false);
        // saveUserInfo(context,userInfo);
@@ -50,15 +49,5 @@ public class LoginActivity extends AppCompatActivity {
             }
             }
         });
-
-        btnChange.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(context,ActivityChangePassword.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
     }
 }

@@ -25,5 +25,6 @@
     <string name="tv_c_pass">Current Password</string>
     <string name="tv_n_pass">New Password</string>
     <string name="bt_s_pass">Save New Password</string>
+    <string name="admin_mode_title">%1$s Admin Mode</string>
 
 </resources>

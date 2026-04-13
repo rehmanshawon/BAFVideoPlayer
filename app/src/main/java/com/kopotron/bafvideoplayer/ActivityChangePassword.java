@@ -36,6 +36,12 @@ public class ActivityChangePassword extends AppCompatActivity {
         textViewNew=findViewById(R.id.TV_N_PASS);
 
         UserInfo userInfo=loadUserInfo(context);
+        if (!userInfo.getLoggedIn()) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
 
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +52,7 @@ public class ActivityChangePassword extends AppCompatActivity {
                         userInfo.setPassword(editTextNewPass.getText().toString());
                         userInfo.setLoggedIn(false);
                         saveUserInfo(context,userInfo);
-                        Intent intent=new Intent(context,LoginActivity.class);
+                        Intent intent=new Intent(ActivityChangePassword.this,LoginActivity.class);
                         startActivity(intent);
                         finish();
                     }
